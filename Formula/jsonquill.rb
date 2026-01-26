@@ -8,6 +8,8 @@ class Jsonquill < Formula
   sha256 "143ccd83cdf67e14c7758cb6075cde163455ac1c0abb73fe41f4ed4d866d3258"
   license "MIT"
 
+  depends_on "rust" => :build
+
   def install
     system "cargo", "install", *std_cargo_args
   end
