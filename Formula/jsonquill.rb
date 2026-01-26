@@ -13,6 +13,6 @@ class Jsonquill < Formula
   end
 
   test do
-    system "#{bin}/jsonquill", "--version" 
+    assert_match version.to_s, shell_output("#{bin}/jsonquill --version")
   end
 end
