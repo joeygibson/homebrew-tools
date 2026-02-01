@@ -79,3 +79,18 @@ fi
 # Extract just the hash (first field)
 new_sha256=$(echo "$sha_output" | awk '{print $1}')
 echo "New SHA256: $new_sha256"
+
+# Update formula file
+echo ""
+echo "Updating $formula_file..."
+
+# Update version in URL line
+sed -i '' "s|tags/v[0-9.]*\.tar\.gz|tags/v${latest_version}.tar.gz|" "$formula_file"
+
+# Update SHA256 line
+sed -i '' "s|sha256 \".*\"|sha256 \"$new_sha256\"|" "$formula_file"
+
+# Show what changed
+echo ""
+echo "Changes made:"
+git diff "$formula_file"
