@@ -26,3 +26,23 @@ for cmd in gh curl shasum sed git jq; do
         exit 1
     fi
 done
+
+# Extract current version from formula URL line
+url_line=$(grep '^\s*url "' "$formula_file")
+if [[ ! "$url_line" =~ tags/v([0-9.]+)\.tar\.gz ]]; then
+    echo "Error: Could not extract version from formula URL" >&2
+    exit 1
+fi
+current_version="${BASH_REMATCH[1]}"
+
+# Extract GitHub repository (owner/repo)
+if [[ ! "$url_line" =~ github\.com/([^/]+)/([^/]+)/archive ]]; then
+    echo "Error: Could not extract GitHub repository from formula URL" >&2
+    exit 1
+fi
+repo_owner="${BASH_REMATCH[1]}"
+repo_name="${BASH_REMATCH[2]}"
+repo="$repo_owner/$repo_name"
+
+echo "Current version: v$current_version"
+echo "Repository: $repo"
