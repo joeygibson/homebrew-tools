@@ -17,3 +17,12 @@ if [[ ! -f "$formula_file" ]]; then
     echo "Error: Formula file not found: $formula_file" >&2
     exit 1
 fi
+
+# Check required dependencies
+for cmd in gh curl shasum sed git jq; do
+    if ! command -v "$cmd" &> /dev/null; then
+        echo "Error: Required command '$cmd' not found" >&2
+        echo "Please install $cmd and try again" >&2
+        exit 1
+    fi
+done
