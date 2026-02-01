@@ -4,8 +4,8 @@
 class Jsonquill < Formula
   desc "A terminal-based structural JSON editor with vim-style keybindings built in Rust"
   homepage "https://github.com/joeygibson/jsonquill"
-  url "https://github.com/joeygibson/jsonquill/archive/refs/tags/v0.7.0.tar.gz"
-  sha256 "143ccd83cdf67e14c7758cb6075cde163455ac1c0abb73fe41f4ed4d866d3258"
+  url "https://github.com/joeygibson/jsonquill/archive/refs/tags/v0.12.0.tar.gz"
+  sha256 "3068c8175646f04e884f4c7e0fa0eb0d4c12ba49ce0208878bac8b81af95cfa3"
   license "MIT"
 
   depends_on "rust" => :build
