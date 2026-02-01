@@ -94,3 +94,25 @@ sed -i '' "s|sha256 \".*\"|sha256 \"$new_sha256\"|" "$formula_file"
 echo ""
 echo "Changes made:"
 git diff "$formula_file"
+
+# Create git commit
+echo ""
+echo "Creating commit..."
+git add "$formula_file"
+
+commit_message="Update $formula_name to v$latest_version
+
+- Updated from v$current_version to v$latest_version
+- Updated SHA256 checksum
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+
+if ! git commit -m "$commit_message" 2>&1; then
+    echo "Error: Failed to create git commit" >&2
+    echo "Formula file has been updated but not committed" >&2
+    exit 1
+fi
+
+commit_sha=$(git rev-parse --short HEAD)
+echo "Successfully updated $formula_name from v$current_version to v$latest_version"
+echo "Commit: $commit_sha"
