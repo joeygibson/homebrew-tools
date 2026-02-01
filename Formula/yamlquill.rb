@@ -1,7 +1,7 @@
 # Documentation: https://docs.brew.sh/Formula-Cookbook
 #                https://docs.brew.sh/rubydoc/Formula
 # PLEASE REMOVE ALL GENERATED COMMENTS BEFORE SUBMITTING YOUR PULL REQUEST!
-class yamlquill < Formula
+class Yamlquill < Formula
   desc "A terminal-based structural yaml editor with vim-style keybindings built in Rust"
   homepage "https://github.com/joeygibson/yamlquill"
   url "https://github.com/joeygibson/yamlquill/archive/refs/tags/v0.2.1.tar.gz"
