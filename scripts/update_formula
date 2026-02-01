@@ -46,3 +46,23 @@ repo="$repo_owner/$repo_name"
 
 echo "Current version: v$current_version"
 echo "Repository: $repo"
+
+# Fetch latest release from GitHub
+echo "Fetching latest release for $repo..."
+if ! release_json=$(gh api "repos/$repo/releases/latest" 2>&1); then
+    echo "Error: Failed to fetch latest release from GitHub" >&2
+    echo "$release_json" >&2
+    exit 1
+fi
+
+# Extract tag name and strip leading 'v'
+tag_name=$(echo "$release_json" | jq -r '.tag_name')
+latest_version="${tag_name#v}"
+
+# Compare versions
+if [[ "$current_version" == "$latest_version" ]]; then
+    echo "Formula $formula_name is already at latest version v$latest_version"
+    exit 0
+fi
+
+echo "Update available: v$current_version -> v$latest_version"
