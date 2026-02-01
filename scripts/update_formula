@@ -66,3 +66,16 @@ if [[ "$current_version" == "$latest_version" ]]; then
 fi
 
 echo "Update available: v$current_version -> v$latest_version"
+
+# Compute SHA256 for new version
+tarball_url="https://github.com/$repo/archive/refs/tags/v${latest_version}.tar.gz"
+echo "Computing SHA256 for $tarball_url..."
+if ! sha_output=$(curl -sL "$tarball_url" | shasum -a 256 2>&1); then
+    echo "Error: Failed to download tarball or compute SHA256" >&2
+    echo "$sha_output" >&2
+    exit 1
+fi
+
+# Extract just the hash (first field)
+new_sha256=$(echo "$sha_output" | awk '{print $1}')
+echo "New SHA256: $new_sha256"
