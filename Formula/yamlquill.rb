@@ -4,8 +4,8 @@
 class Yamlquill < Formula
   desc "A terminal-based structural yaml editor with vim-style keybindings built in Rust"
   homepage "https://github.com/joeygibson/yamlquill"
-  url "https://github.com/joeygibson/yamlquill/archive/refs/tags/v0.2.1.tar.gz"
-  sha256 "143ccd83cdf67e14c7758cb6075cde163455ac1c0abb73fe41f4ed4d866d3258"
+  url "https://github.com/joeygibson/yamlquill/archive/refs/tags/v0.3.1.tar.gz"
+  sha256 "b6b2f63485d57c609704f1e56f73a9ae0b49d3935531449bc3e07ba46fbdde92"
   license "MIT"
 
   depends_on "rust" => :build
