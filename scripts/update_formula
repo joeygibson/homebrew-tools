@@ -27,16 +27,17 @@ for cmd in gh curl shasum sed git jq; do
     fi
 done
 
-# Extract current version from formula URL line
-url_line=$(grep '^\s*url "' "$formula_file")
-if [[ ! "$url_line" =~ tags/v([0-9.]+)\.tar\.gz ]]; then
-    echo "Error: Could not extract version from formula URL" >&2
+# Extract current version from the version line
+version_line=$(grep '^\s*version "' "$formula_file")
+if [[ ! "$version_line" =~ version\ \"([0-9.]+)\" ]]; then
+    echo "Error: Could not extract version from formula" >&2
     exit 1
 fi
 current_version="${BASH_REMATCH[1]}"
 
-# Extract GitHub repository (owner/repo)
-if [[ ! "$url_line" =~ github\.com/([^/]+)/([^/]+)/archive ]]; then
+# Extract GitHub repository (owner/repo) from a URL line
+url_line=$(grep '^\s*url "' "$formula_file" | head -1)
+if [[ ! "$url_line" =~ github\.com/([^/]+)/([^/]+)/releases ]]; then
     echo "Error: Could not extract GitHub repository from formula URL" >&2
     exit 1
 fi
@@ -67,28 +68,49 @@ fi
 
 echo "Update available: v$current_version -> v$latest_version"
 
-# Compute SHA256 for new version
-tarball_url="https://github.com/$repo/archive/refs/tags/v${latest_version}.tar.gz"
-echo "Computing SHA256 for $tarball_url..."
-if ! sha_output=$(curl -sL "$tarball_url" | shasum -a 256 2>&1); then
-    echo "Error: Failed to download tarball or compute SHA256" >&2
-    echo "$sha_output" >&2
-    exit 1
-fi
+# Define the platform-specific asset names
+assets=(
+    "${formula_name}-macos-aarch64.tar.gz"
+    "${formula_name}-macos-x86_64.tar.gz"
+    "${formula_name}-linux-x86_64.tar.gz"
+)
 
-# Extract just the hash (first field)
-new_sha256=$(echo "$sha_output" | awk '{print $1}')
-echo "New SHA256: $new_sha256"
+# Compute SHA256 for each platform binary
+declare -A sha256s
+for asset in "${assets[@]}"; do
+    asset_url="https://github.com/$repo/releases/download/v${latest_version}/${asset}"
+    echo "Computing SHA256 for $asset..."
+    if ! sha_output=$(curl -sL "$asset_url" | shasum -a 256 2>&1); then
+        echo "Error: Failed to download or compute SHA256 for $asset" >&2
+        echo "$sha_output" >&2
+        exit 1
+    fi
+    sha256s["$asset"]=$(echo "$sha_output" | awk '{print $1}')
+    echo "  ${sha256s[$asset]}"
+done
 
 # Update formula file
 echo ""
 echo "Updating $formula_file..."
 
-# Update version in URL line
-sed -i '' "s|tags/v[0-9.]*\.tar\.gz|tags/v${latest_version}.tar.gz|" "$formula_file"
+# Update the version line
+sed -i '' "s|version \"${current_version}\"|version \"${latest_version}\"|" "$formula_file"
 
-# Update SHA256 line
-sed -i '' "s|sha256 \".*\"|sha256 \"$new_sha256\"|" "$formula_file"
+# Update all URL lines (replace old version with new in download URLs)
+sed -i '' "s|/download/v${current_version}/|/download/v${latest_version}/|" "$formula_file"
+
+# Update each platform's SHA256 by finding the URL line and updating the sha256 on the next line
+for asset in "${assets[@]}"; do
+    new_sha="${sha256s[$asset]}"
+    # Use awk to find the URL line containing this asset and update the next sha256 line
+    awk -v asset="$asset" -v new_sha="$new_sha" '
+        found && /sha256/ {
+            sub(/sha256 ".*"/, "sha256 \"" new_sha "\"")
+            found = 0
+        }
+        { found = ($0 ~ asset); print }
+    ' "$formula_file" > "${formula_file}.tmp" && mv "${formula_file}.tmp" "$formula_file"
+done
 
 # Show what changed
 echo ""
@@ -103,9 +125,9 @@ git add "$formula_file"
 commit_message="Update $formula_name to v$latest_version
 
 - Updated from v$current_version to v$latest_version
-- Updated SHA256 checksum
+- Updated SHA256 checksums for all platform binaries
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>"
 
 if ! git commit -m "$commit_message" 2>&1; then
     echo "Error: Failed to create git commit" >&2

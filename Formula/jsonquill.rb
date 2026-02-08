@@ -1,17 +1,26 @@
-# Documentation: https://docs.brew.sh/Formula-Cookbook
-#                https://docs.brew.sh/rubydoc/Formula
-# PLEASE REMOVE ALL GENERATED COMMENTS BEFORE SUBMITTING YOUR PULL REQUEST!
 class Jsonquill < Formula
   desc "A terminal-based structural JSON editor with vim-style keybindings built in Rust"
   homepage "https://github.com/joeygibson/jsonquill"
-  url "https://github.com/joeygibson/jsonquill/archive/refs/tags/v0.12.4.tar.gz"
-  sha256 "3ffafb328b43758e7f07b5f1a26222e84cc7eaa32e2266347113c3f16f5f787e"
+  version "0.12.4"
   license "MIT"
 
-  depends_on "rust" => :build
+  on_macos do
+    if Hardware::CPU.arm?
+      url "https://github.com/joeygibson/jsonquill/releases/download/v0.12.4/jsonquill-macos-aarch64.tar.gz"
+      sha256 "14c0666fb00c29c0fddc92ca4c8889c40e37b1c25c09d0de0b8a0e5d6cd3edab"
+    else
+      url "https://github.com/joeygibson/jsonquill/releases/download/v0.12.4/jsonquill-macos-x86_64.tar.gz"
+      sha256 "cb7f151ed7cd4d8740c558cd8ba3c76484671bfe7b86c98c9b789448d5cfcdaa"
+    end
+  end
+
+  on_linux do
+    url "https://github.com/joeygibson/jsonquill/releases/download/v0.12.4/jsonquill-linux-x86_64.tar.gz"
+    sha256 "a76324efe700b71a4d8b336c5fba58b0502b1d46a9d494183f7ef946596b359a"
+  end
 
   def install
-    system "cargo", "install", *std_cargo_args
+    bin.install "jsonquill"
   end
 
   test do
