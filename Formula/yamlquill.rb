@@ -1,22 +1,22 @@
 class Yamlquill < Formula
   desc "A terminal-based structural yaml editor with vim-style keybindings built in Rust"
   homepage "https://github.com/joeygibson/yamlquill"
-  version "1.0.0"
+  version "1.1.0"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/joeygibson/yamlquill/releases/download/v1.0.0/yamlquill-macos-aarch64.tar.gz"
-      sha256 "bf81440b79ddcb243fe8310a84f8d5ac5c5b8ee6927c8c251d3dc0472606d255"
+      url "https://github.com/joeygibson/yamlquill/releases/download/v1.1.0/yamlquill-macos-aarch64.tar.gz"
+      sha256 "263815ed8051f4e6ee48c8e51f43e39af0dfebd9efc93e4ed5fcfc5150915f62"
     else
-      url "https://github.com/joeygibson/yamlquill/releases/download/v1.0.0/yamlquill-macos-x86_64.tar.gz"
-      sha256 "04927f5e3263b5937d253d5411f1d86c4b95765b8086769f89c336d40330d908"
+      url "https://github.com/joeygibson/yamlquill/releases/download/v1.1.0/yamlquill-macos-x86_64.tar.gz"
+      sha256 "ab6f0c1f6c1af621af595a02e275974f3254db7f1a1369df896986d10fda5e4f"
     end
   end
 
   on_linux do
-    url "https://github.com/joeygibson/yamlquill/releases/download/v1.0.0/yamlquill-linux-x86_64.tar.gz"
-    sha256 "5afc82e440abf72e442159c40273233fae58147d1601e07cd323c24231054a53"
+    url "https://github.com/joeygibson/yamlquill/releases/download/v1.1.0/yamlquill-linux-x86_64.tar.gz"
+    sha256 "b767520121356d42afd9926cb3e0c71e72666365afe16cd69c7aef2e5537bfc2"
   end
 
   def install
